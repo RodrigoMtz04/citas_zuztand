@@ -1,17 +1,25 @@
-import React from 'react'
 import { useForm } from 'react-hook-form'
 import Error from './Error'
+import { usePacienteStore } from '../store/store'
+import type { DraftPatient } from '../types'
+
 
 const Formulario = () => {
 
-  const { register, handleSubmit, formState: { errors } } = useForm()
+    const { register, handleSubmit, formState: { errors } } = useForm<DraftPatient>()
 
-  const registrarPaciente = () => {
-    console.log('Registrando paciente')
-  }
+    const registrarPaciente = (data: DraftPatient) => {
+        // Opción 1: Usar getState() (sin suscripción)
+        usePacienteStore.getState().agregarPaciente(data)
 
-  
-  return (
+        // Opción 2: Extraer la función del hook (con suscripción)
+        // const agregarPaciente = usePacienteStore(state => state.agregarPaciente)
+        // agregarPaciente(data)
+    }
+
+
+
+    return (
     <div className="md:w-1/2 lg:w-2/5 mx-5">
         <h2 className="font-black text-3xl text-center">Seguimiento Pacientes</h2>
 
