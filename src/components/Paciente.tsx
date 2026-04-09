@@ -1,18 +1,28 @@
 import type { Patient } from "../types"
 import PacienteDetalle from "./PacienteDetalle"
 import { usePacienteStore } from '../store/store'
-
+import DialogModal from "./DialgoModal.tsx";
+import { useState } from "react";
+import { toast } from 'react-toastify';
 
 type PacienteProps = {
     paciente: Patient
 }
 
 const Paciente = ({ paciente }: PacienteProps) => {
+
+    const [isOpened, setIsOpened] = useState(false);
+
+
+    const onProceed = () => {
+       handleClickEliminar()
+    }
+
     const eliminarPaciente = usePacienteStore((state) => state.eliminarPaciente)
-    //const getPatientById = usePacienteStore((state) => state.getPatientById)
 
     const handleClickEliminar = () => {
         eliminarPaciente(paciente.id)
+        toast.success(`Se ha eliminado correctamente a ${paciente.name}`)
     }
 
     return (
@@ -34,9 +44,18 @@ const Paciente = ({ paciente }: PacienteProps) => {
                 <button
                     type="button"
                     className="py-2 px-10 bg-red-600 hover:bg-red-700 text-white font-bold uppercase rounded-lg"
-                    onClick={handleClickEliminar}
+                    onClick={() => setIsOpened(true)}
                 >Eliminar</button>
             </div>
+
+            <DialogModal
+                title="Confirmar eliminación"
+                isOpened={isOpened}
+                onProceed={onProceed}
+                onClose={() => setIsOpened(false)}
+            >
+                <p>¿Estás seguro de que deseas eliminar a {paciente.name}?</p>
+            </DialogModal>
         </div>
     )
 }

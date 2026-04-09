@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import Error from './Error'
 import { usePacienteStore } from '../store/store'
 import type { DraftPatient } from '../types'
+import {toast} from "react-toastify";
 
 
 const Formulario = () => {
@@ -11,6 +12,9 @@ const Formulario = () => {
     const registrarPaciente = (data: DraftPatient) => {
         // Opción 1: Usar getState() (sin suscripción)
         usePacienteStore.getState().agregarPaciente(data)
+        toast.success(`Paciente ${data.name} registrado correctamente`)
+
+
 
         // Opción 2: Extraer la función del hook (con suscripción)
         // const agregarPaciente = usePacienteStore(state => state.agregarPaciente)
