@@ -108,8 +108,14 @@ const Formulario = () => {
                 <input  
                     id="date"
                     className="w-full p-3  border border-gray-100"  
-                    type="date" 
+                    type="date"
+                    {...register('date', {
+                        required: 'La fecha de alta es obligatoria'
+                    })}
                 />
+                {errors.date && 
+                    <Error>{errors.date?.message?.toString()}</Error>
+                }
             </div>
             
             <div className="mb-5">
@@ -119,8 +125,14 @@ const Formulario = () => {
                 <textarea  
                     id="symptoms"
                     className="w-full p-3  border border-gray-100"  
-                    placeholder="Síntomas del paciente" 
+                    placeholder="Síntomas del paciente"
+                    {...register('symptoms', {
+                        required: 'Los síntomas son obligatorios'
+                    })}
                 ></textarea>
+                {errors.symptoms && 
+                    <Error>{errors.symptoms?.message?.toString()}</Error>
+                }
             </div>
 
             <input
