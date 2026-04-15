@@ -3,23 +3,44 @@ import Error from './Error'
 import { usePacienteStore } from '../store/store'
 import type { DraftPatient } from '../types'
 import {toast} from "react-toastify";
+import { useEffect} from 'react'
 
 
 const Formulario = () => {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<DraftPatient>()
+    const pacienteActivo = usePacienteStore((state) => state.pacienteActivo)
+    const agregarPaciente = usePacienteStore((state) => state.agregarPaciente)
+    const actualizarPaciente = usePacienteStore((state) => state.actualizarPaciente)
+    const limpiarPacienteActivo = usePacienteStore((state) => state.limpiarPacienteActivo)
+
+    const {register, handleSubmit, formState: { errors }, setValue, reset} = useForm<DraftPatient>()
+
+    useEffect(() => {
+        if (pacienteActivo) {
+            setValue('name', pacienteActivo.name)
+            setValue('caretaker', pacienteActivo.caretaker)
+            setValue('email', pacienteActivo.email)
+            setValue('date', pacienteActivo.date)
+            setValue('symptoms', pacienteActivo.symptoms)
+        }
+    }, [pacienteActivo])
 
     const registrarPaciente = (data: DraftPatient) => {
-        // Opción 1: Usar getState() (sin suscripción)
-        usePacienteStore.getState().agregarPaciente(data)
-        toast.success(`Paciente ${data.name} registrado correctamente`)
-
-
-
-        // Opción 2: Extraer la función del hook (con suscripción)
-        // const agregarPaciente = usePacienteStore(state => state.agregarPaciente)
-        // agregarPaciente(data)
+        if (pacienteActivo) {
+            actualizarPaciente(data) // Modo edicion
+            toast.success(`Paciente ${data.name} actualizado correctamente`)
+        } else {
+            agregarPaciente(data) // Modo agregar
+            toast.success(`Paciente ${data.name} registrado correctamente`)
+        }
+        reset()
     }
+
+    const handleCancelar = () => {
+        limpiarPacienteActivo()
+        reset()
+    }
+
 
 
 
@@ -113,7 +134,7 @@ const Formulario = () => {
                         required: 'La fecha de alta es obligatoria'
                     })}
                 />
-                {errors.date && 
+                {errors.date &&
                     <Error>{errors.date?.message?.toString()}</Error>
                 }
             </div>
@@ -130,7 +151,7 @@ const Formulario = () => {
                         required: 'Los síntomas son obligatorios'
                     })}
                 ></textarea>
-                {errors.symptoms && 
+                {errors.symptoms &&
                     <Error>{errors.symptoms?.message?.toString()}</Error>
                 }
             </div>
@@ -140,6 +161,18 @@ const Formulario = () => {
                 className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
                 value='Guardar Paciente'
             />
+
+
+            {pacienteActivo && (
+                <button
+                type="button"
+                className="bg-gray-600 w-full p-3 text-white uppercase font-bold hover:bg-
+                gray-700 cursor-pointer transition-colors mt-3"
+                onClick={handleCancelar}
+                >
+                Cancelar
+                </button>
+                )}
         </form> 
     </div>
   )
