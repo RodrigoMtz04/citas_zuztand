@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css'
 
 
 function App() {
-
   return (
     <>
       <div className="container mx-auto mt-20">
@@ -13,6 +12,7 @@ function App() {
             Seguimiento de Pacientes {''}
             <span className="text-indigo-700">Veterinaria</span>
           </h1>
+
 
           <div className="mt-12 md:flex">
               <Formulario />

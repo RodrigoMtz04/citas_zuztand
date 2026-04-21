@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { DraftPatient, Patient } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,9 +20,10 @@ const crearPaciente = (data: DraftPatient): Patient => {
     }
 }
 
-export const usePacienteStore = create<PacientesState>((set) => ({
-    pacientes: [],
-    pacienteActivo: null,
+export const usePacienteStore = create<PacientesState>()(
+    persist((set) => ({
+        pacientes: [],
+        pacienteActivo: null,
 
     agregarPaciente: (data) =>
         set((state) => ({ pacientes: [...state.pacientes, crearPaciente(data)] })),
@@ -39,19 +41,27 @@ export const usePacienteStore = create<PacientesState>((set) => ({
     },
 
     actualizarPaciente: (data) => {
-        set((state) => ({
-            pacientes: state.pacientes.map(paciente =>
+        set((state) => {
+            const pacientesActualizados = state.pacientes.map(paciente =>
                 paciente.id === state.pacienteActivo?.id
                     ? { id: paciente.id, ...data }
                     : paciente
-            ),
-            pacienteActivo: null
-        }))
+            );
+            return {
+                pacientes: pacientesActualizados,
+                pacienteActivo: null
+            };
+        })
     },
 
-    limpiarPacienteActivo: () => {
-        set(() => ({
-            pacienteActivo: null
-        }))
-    }
-}))
+        limpiarPacienteActivo: () => {
+            set(() => ({
+                pacienteActivo: null
+            }))
+        }
+    }), {
+        name: 'pacientes-storage',
+        storage: createJSONStorage(() => localStorage),
+        partialize: (state) => ({ pacientes: state.pacientes })
+    })
+)

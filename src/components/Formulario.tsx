@@ -22,15 +22,18 @@ const Formulario = () => {
             setValue('email', pacienteActivo.email)
             setValue('date', pacienteActivo.date)
             setValue('symptoms', pacienteActivo.symptoms)
+        } else {
+            reset()
         }
-    }, [pacienteActivo])
+    }, [pacienteActivo, setValue, reset])
 
     const registrarPaciente = (data: DraftPatient) => {
         if (pacienteActivo) {
-            actualizarPaciente(data) // Modo edicion
+            actualizarPaciente(data)
             toast.success(`Paciente ${data.name} actualizado correctamente`)
+            limpiarPacienteActivo()
         } else {
-            agregarPaciente(data) // Modo agregar
+            agregarPaciente(data)
             toast.success(`Paciente ${data.name} registrado correctamente`)
         }
         reset()
@@ -54,18 +57,19 @@ const Formulario = () => {
         </p>
 
         <form 
+            key={pacienteActivo?.id || 'nuevo'}
             className="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
             noValidate
             onSubmit={handleSubmit(registrarPaciente)}
         >
               <div className="mb-5">
-                  <label htmlFor="name" className="text-sm uppercase font-bold">
-                      Paciente 
+                  <label htmlFor="name" className="text-sm uppercase font-bold text-gray-700">
+                      Paciente
                   </label>
                   <input  
                       id="name"
-                      className="w-full p-3  border border-gray-100"  
-                      type="text" 
+                      className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                      type="text"
                       placeholder="Nombre del Paciente" 
                       {...register('name', {
                             required: 'El nombre del paciente es obligatorio',
@@ -79,14 +83,14 @@ const Formulario = () => {
 
               </div>
 
-              <div className="mb-5">
-                <label htmlFor="caretaker" className="text-sm uppercase font-bold">
-                    Propietario 
+               <div className="mb-5">
+                <label htmlFor="caretaker" className="text-sm uppercase font-bold text-gray-700">
+                    Propietario
                 </label>
                 <input  
                     id="caretaker"
-                    className="w-full p-3  border border-gray-100"  
-                    type="text" 
+                    className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                    type="text"
                     placeholder="Nombre del Propietario" 
                     {...register('caretaker', {
                             required: 'El nombre del propietario es obligatorio',
@@ -100,13 +104,13 @@ const Formulario = () => {
               </div>
 
             <div className="mb-5">
-              <label htmlFor="email" className="text-sm uppercase font-bold">
-                  Email 
+              <label htmlFor="email" className="text-sm uppercase font-bold text-gray-700">
+                  Email
               </label>
               <input  
                   id="email"
-                  className="w-full p-3  border border-gray-100"  
-                  type="email" 
+                  className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  type="email"
                   placeholder="Email de Registro" 
                   {...register('email', {
                             required: 'El email es obligatorio',
@@ -123,12 +127,12 @@ const Formulario = () => {
             </div>
 
             <div className="mb-5">
-                <label htmlFor="date" className="text-sm uppercase font-bold">
-                    Fecha Alta 
+                <label htmlFor="date" className="text-sm uppercase font-bold text-gray-700">
+                    Fecha Alta
                 </label>
                 <input  
                     id="date"
-                    className="w-full p-3  border border-gray-100"  
+                    className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                     type="date"
                     {...register('date', {
                         required: 'La fecha de alta es obligatoria'
@@ -140,13 +144,14 @@ const Formulario = () => {
             </div>
             
             <div className="mb-5">
-                <label htmlFor="symptoms" className="text-sm uppercase font-bold">
-                Síntomas 
+                <label htmlFor="symptoms" className="text-sm uppercase font-bold text-gray-700">
+                Síntomas
                 </label>
                 <textarea  
                     id="symptoms"
-                    className="w-full p-3  border border-gray-100"  
+                    className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 resize-none"
                     placeholder="Síntomas del paciente"
+                    rows={4}
                     {...register('symptoms', {
                         required: 'Los síntomas son obligatorios'
                     })}

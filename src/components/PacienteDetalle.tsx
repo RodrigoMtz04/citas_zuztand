@@ -4,8 +4,9 @@ type DetallePacienteProps = {
 }
 export default function PacienteDetalle({label, data} : DetallePacienteProps) {
     return (
-        <p className="font-bold mb-3 text-gray-700 uppercase">{label}: {''}
-            <span className="font-normal normal-case">{data}</span>
-        </p>
+        <div className="mb-4 py-2 border-b border-gray-200 last:border-b-0">
+            <p className="text-sm font-bold text-gray-600 uppercase mb-1">{label}:</p>
+            <p className="text-base text-gray-900 font-semibold">{data}</p>
+        </div>
     )
 }
