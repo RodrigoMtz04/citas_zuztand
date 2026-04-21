@@ -1,67 +1,64 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import type { DraftPatient, Patient } from '../types';
-import { v4 as uuidv4 } from 'uuid';
+import { persist } from 'zustand/middleware'
+import type { DraftPatient, Patient } from '../types'
+import { v4 as uuidv4 } from 'uuid'
 
 type PacientesState = {
-    pacientes: Patient[];
-    pacienteActivo: Patient | null;
-    agregarPaciente: (data: DraftPatient) => void;
-    eliminarPaciente: (id: Patient['id']) => void;
-    establecerPacienteActivo: (paciente: Patient) => void;
-    actualizarPaciente: (data: DraftPatient) => void;
-    limpiarPacienteActivo: () => void;
+    pacientes: Patient[]
+    pacienteActivo: Patient | null
+    agregarPaciente: (data: DraftPatient) => void
+    eliminarPaciente: (id: Patient['id']) => void
+    establecerPacienteActivo: (paciente: Patient) => void
+    actualizarPaciente: (data: DraftPatient) => void
+    limpiarPacienteActivo: () => void
 }
 
-const crearPaciente = (data: DraftPatient): Patient => {
-    return {
-        id: uuidv4(),
-        ...data
-    }
-}
+const crearPaciente = (data: DraftPatient): Patient => ({
+    id: uuidv4(),
+    ...data
+})
 
 export const usePacienteStore = create<PacientesState>()(
-    persist((set) => ({
-        pacientes: [],
-        pacienteActivo: null,
+    persist(
+        (set) => ({
+            pacientes: [],
+            pacienteActivo: null,
 
-    agregarPaciente: (data) =>
-        set((state) => ({ pacientes: [...state.pacientes, crearPaciente(data)] })),
+            agregarPaciente: (data) =>
+                set((state) => ({
+                    pacientes: [...state.pacientes, crearPaciente(data)]
+                })),
 
-    eliminarPaciente: (id) => {
-        set((state) => ({
-            pacientes: state.pacientes.filter(paciente => paciente.id !== id)
-        }))
-    },
+            eliminarPaciente: (id) =>
+                set((state) => ({
+                    pacientes: state.pacientes.filter(paciente => paciente.id !== id)
+                })),
 
-    establecerPacienteActivo: (paciente) => {
-        set(() => ({
-            pacienteActivo: paciente
-        }))
-    },
+            establecerPacienteActivo: (paciente) =>
+                set(() => ({
+                    pacienteActivo: paciente
+                })),
 
-    actualizarPaciente: (data) => {
-        set((state) => {
-            const pacientesActualizados = state.pacientes.map(paciente =>
-                paciente.id === state.pacienteActivo?.id
-                    ? { id: paciente.id, ...data }
-                    : paciente
-            );
-            return {
-                pacientes: pacientesActualizados,
-                pacienteActivo: null
-            };
-        })
-    },
+            actualizarPaciente: (data) =>
+                set((state) => ({
+                    pacientes: state.pacientes.map(paciente =>
+                        paciente.id === state.pacienteActivo?.id
+                            ? { id: paciente.id, ...data }
+                            : paciente
+                    ),
+                    pacienteActivo: null
+                })),
 
-        limpiarPacienteActivo: () => {
-            set(() => ({
-                pacienteActivo: null
-            }))
+            limpiarPacienteActivo: () =>
+                set(() => ({
+                    pacienteActivo: null
+                }))
+        }),
+        {
+            name: 'pacientes-storage',
+            partialize: (state) => ({
+                pacientes: state.pacientes
+            })
         }
-    }), {
-        name: 'pacientes-storage',
-        storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({ pacientes: state.pacientes })
-    })
+    )
 )
